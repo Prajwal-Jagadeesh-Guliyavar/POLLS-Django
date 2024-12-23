@@ -56,7 +56,7 @@ def vote(request, question_id):
             request,
             "polls/details.html",
             {
-                "questtion":question,
+                "question":question,
                 "error":"You didnt select a choice.",
             },
         )
