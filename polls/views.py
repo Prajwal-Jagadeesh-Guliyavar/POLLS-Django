@@ -12,7 +12,7 @@ from django.views import generic
 
 class IndexView(generic.ListView):
     template_name = "polls/index.html"
-    context_object_name= "lates_question_list"
+    context_object_name= "latest_question_list"
 
     def get_queryset(self):
         return Questions.objects.order_by("-pub_date")[:5]
