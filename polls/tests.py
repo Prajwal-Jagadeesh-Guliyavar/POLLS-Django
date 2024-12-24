@@ -22,4 +22,4 @@ class QuestionsModelTests(TestCase):
         #was_published_recently() returns True for questions whose pub_date is within the last day.
         time = timezone.now() + datetime.timedelta(hours=23, minutes=59, seconds=59)
         recent_questions=Questions(pub_date = time)
-        self.assertIs(recent_questions.was_published_recently(),False)
+        self.assertIs(recent_questions.was_published_recently(),True)
