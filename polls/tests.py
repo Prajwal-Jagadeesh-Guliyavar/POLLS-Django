@@ -20,7 +20,7 @@ class QuestionsModelTests(TestCase):
 
     def test_was_published_recently_with_recent_question(self):
         #was_published_recently() returns True for questions whose pub_date is within the last day.
-        time = timezone.now() + datetime.timedelta(hours=23, minutes=59, seconds=59)
+        time = timezone.now() - datetime.timedelta(hours=23, minutes=59, seconds=59)
         recent_questions=Questions(pub_date = time)
         self.assertIs(recent_questions.was_published_recently(),True)
 
@@ -46,7 +46,7 @@ class QuestionIndexViewTests(TestCase):
 
     def test_past_questions(self):
         #the questions of pub_date in the past are displayed on the index page.
-        question = create_question(question_text="Past question.", pub_date= -30)
+        question = create_question(question_text="Past question.", days= -30)
         response = self.client.get(reverse("polls:index"))
         self.assertQuerySetEqual(
             response.context["latest_question_list"],
@@ -57,7 +57,7 @@ class QuestionIndexViewTests(TestCase):
         #the questions with the pub_date in the future are not displayed in the index
         create_question(question_text="Future question", days=30)
         response = self.client.get(reverse("polls:index"))
-        self.assertContains(response, "No polls available.")
+        self.assertContains(response, "No polls are available.")
         self.assertQuerySetEqual(response.context["latest_question_list"],[])
     
     def test_future_question_and_past_question(self):
@@ -91,6 +91,6 @@ class QuestionDetailViewTests(TestCase):
     def test_past_question(self):
         #detail view of the question with the pub_date in the past display's question text
         past_question = create_question(question_text="Past question", days=-5)
-        url = reverse("polls:detail",args=(past_question.id))
+        url = reverse("polls:detail",args=(past_question.id,))
         response = self.client.get(url)
         self.assertContains(response, past_question.question_text)
