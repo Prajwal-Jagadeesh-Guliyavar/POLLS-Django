@@ -1,27 +1,35 @@
-<h1>Question details.</h1>
+<h1>Question Details</h1>
 
-<ul>
-    {% for choice in object.choice_set.all %}
-        <li>{{ choice.choice_text }}</li>
-    {% endfor %}
-</ul>
-{% if object.id %}
-<form action="{% url 'polls:vote' object.id %}" method="post">
-    {% csrf_token %}
-    <fieldset>
-        <legend><h1>{{ object.question_text }}</h1></legend>
-        {% if error %}
-            <p><strong>{{ error }}</strong></p>
-        {% endif %}
+{% if object %}
+    <!-- Display question text -->
+    <h2>{{ object.question_text }}</h2>
+
+    <!-- Display available choices -->
+    <ul>
         {% for choice in object.choice_set.all %}
-            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-            <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+            <li>{{ choice.choice_text }}</li>
         {% endfor %}
-    </fieldset>
-    <input type="submit" value="Vote">
-</form>
-<!--the below block is for the debug-->
+    </ul>
+
+    <!-- Voting form -->
+    <form action="{% url 'polls:vote' object.id %}" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><h1>{{ object.question_text }}</h1></legend>
+            
+            {% if error_message %}
+                <p><strong>{{ error_message }}</strong></p>
+            {% endif %}
+            
+            {% for choice in object.choice_set.all %}
+                <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+            {% endfor %}
+        </fieldset>
+        
+        <input type="submit" value="Vote">
+    </form>
 {% else %}
-<p>Question ID: {{ object.id }}</p>
-<p>Question Text: {{ object.question_text }}</p>
+    <!-- If no question is found, show an error message -->
+    <p>Error: Question not found.</p>
 {% endif %}
