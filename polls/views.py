@@ -28,8 +28,9 @@ class ResultsView(generic.DetailView):
     model = Questions
     template_name = "polls/results.html"
 
+
 def vote(request, question_id):
-    print(f"Received question_id: {question_id}")
+    
     question = get_object_or_404(Questions, pk=question_id)
     try:
         selected_choice = question.choice_set.get(pk=request.POST["choice"])
@@ -39,7 +40,7 @@ def vote(request, question_id):
             request,
             "polls/details.html",
             {
-                "question": question,
+                "object": question,  # Pass 'object' instead of 'question'
                 "error_message": "You didn't select a choice.",
             },
         )
@@ -47,6 +48,6 @@ def vote(request, question_id):
         selected_choice.votes = F("votes") + 1
         selected_choice.save()
         # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
+        # with POST data to prevent resubmissions
         return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
+
